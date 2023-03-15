@@ -8,19 +8,27 @@ Programul afiseaza un patrat pe care il translateaza pe axa x la apasarea sageti
 #include "glaux.h"
 
 static GLfloat x = 0;
-
+static GLfloat y = 0;
 void myInit() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
 }
+void CALLBACK MutaSus()
+{
+    y = y + 5;
 
+}
+void CALLBACK MutaJos()
+{
+    y = y - 5;
+}
 void CALLBACK MutaStanga()
 {
-    x = x - 10;
+    x = x - 5;
 }
 
 void CALLBACK MutaDreapta()
 {
-    x = x + 10;
+    x = x + 5;
 }
 
 void CALLBACK display()
@@ -29,9 +37,9 @@ void CALLBACK display()
 
     glLoadIdentity();
 
-    glTranslatef(x, 0, 0.0);
+    glTranslatef(x, y, 0.0);
 
-    glBegin(GL_QUADS);
+   /* glBegin(GL_QUADS);
     {
         glColor3f(1.0, 0.0, 0.0);
         glVertex2f(100, 100);
@@ -42,8 +50,17 @@ void CALLBACK display()
         glColor3f(0.0, 1.0, 0.0);
         glVertex2f(100.0, 150.0);
     }
-    glEnd();
-
+    glEnd();*/
+    GLUquadricObj* qobj = 0;
+    qobj = gluNewQuadric();
+    gluQuadricDrawStyle(qobj, GLU_FILL);
+    gluQuadricNormals(qobj, GLU_SMOOTH);
+    gluQuadricTexture(qobj, GLU_TRUE);
+    gluQuadricOrientation(qobj, GLU);
+    glPushMatrix();
+    glTranslatef(0, 10, 0);
+    gluSphere(qobj, 20, 20, 30);
+    glPopMatrix();
     glFlush();
 }
 
@@ -80,11 +97,13 @@ void CALLBACK myReshape(GLsizei w, GLsizei h)
 int main(int argc, char** argv)
 {
     auxInitDisplayMode(AUX_SINGLE | AUX_RGB);
-    auxInitPosition(0, 0, 800, 600);
+    auxInitPosition(0, 400, 800, 600);
     auxInitWindow("Un patrat");
     myInit();
     auxKeyFunc(AUX_LEFT, MutaStanga);
     auxKeyFunc(AUX_RIGHT, MutaDreapta);
+    auxKeyFunc(AUX_DOWN, MutaJos);
+    auxKeyFunc(AUX_UP,  MutaSus);
 
     auxReshapeFunc(myReshape);
     auxMainLoop(display);
